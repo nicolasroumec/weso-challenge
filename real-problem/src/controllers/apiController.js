@@ -1,6 +1,6 @@
 const https = require('https');
 
-const app_id = 'b6b0e542666b440da6b60b04ce2643ac'; // Reemplaza con tu clave API real
+const app_id = 'b6b0e542666b440da6b60b04ce2643ac';
 const url = 'https://openexchangerates.org/api';
 
 function makeRequest(endpoint) {
