@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exchange Rate Service</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Exchange Rate Service</h1>
+        
+        <div class="section">
+            <h2>Latest Exchange Rates</h2>
+            <button id="getLatestRates">Get Latest Rates</button>
+            <div id="latestRates" class="results"></div>
+        </div>
+
+        <div class="section">
+            <h2>Historical Exchange Rates</h2>
+            <input type="date" id="historicalDate">
+            <button id="getHistoricalRates">Get Historical Rates</button>
+            <div id="historicalRates" class="results"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
