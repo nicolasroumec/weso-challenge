@@ -1,9 +1,7 @@
 import { Router } from 'express';
 import { getLatestRate, getHistoricalRate } from '../controllers/apiController.js';
 
-const router = Router();
+export const apiRouter = Router();
 
-router.get('/latest', getLatestRate);
-router.get('/historical/:date', getHistoricalRate);
-
-export default router;
+apiRouter.get('/latest', getLatestRate);
+apiRouter.get('/historical/:date', getHistoricalRate);
