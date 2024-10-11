@@ -1,8 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const apiController = require('../controllers/apiController');
+import { Router } from 'express';
+import { getLatestRate, getHistoricalRate } from '../controllers/apiController.js';
 
-router.get('/latest', apiController.getLatestRate);
-router.get('/historical/:date', apiController.getHistoricalRate);
+const router = Router();
 
-module.exports = router;
+router.get('/latest', getLatestRate);
+router.get('/historical/:date', getHistoricalRate);
+
+export default router;
