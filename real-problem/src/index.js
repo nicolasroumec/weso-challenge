@@ -23,7 +23,7 @@ connectToDatabase()
 
     app.use((err, req, res, next) => {
       console.error(err.stack);
-      res.status(500).send('Serve error');
+      res.status(500).send('Server error');
     });
 
     app.listen(port, () => {
