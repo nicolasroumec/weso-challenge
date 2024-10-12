@@ -55,23 +55,32 @@ input[type="date"] {
     margin-top: 10px;
     border-radius: 5px;
     overflow-x: auto;
+    display: none;
 }
 
-.json-object {
-    font-family: monospace;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-.json-item {
-    margin-left: 20px;
-}
-
-.json-key {
-    color: #0066cc;
+.date {
     font-weight: bold;
+    margin-bottom: 10px;
 }
 
-.json-value {
+.rates {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.rate-item {
+    background: #fff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.currency {
+    font-weight: bold;
+    color: #0066cc;
+}
+
+.rate {
     color: #006600;
 }

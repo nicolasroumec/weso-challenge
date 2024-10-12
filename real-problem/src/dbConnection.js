@@ -13,11 +13,14 @@ export async function connectToDatabase() {
     return db;
   } catch (error) {
     console.error("DB Error", error);
-    process.exit(1);
+    throw error;
   }
 }
 
 export function getDb() {
+  if (!db) {
+    throw new Error("Database not connected.");
+  }
   return db;
 }
 

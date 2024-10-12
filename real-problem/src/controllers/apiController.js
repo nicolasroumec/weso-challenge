@@ -1,5 +1,6 @@
 import { get } from 'https';
 import { getDb } from '../dbConnection.js';
+import { Rate, rateCollection } from '../models/rate.js';
 
 const app_id = 'b6b0e542666b440da6b60b04ce2643ac'; 
 const url = 'https://openexchangerates.org/api';
@@ -20,50 +21,27 @@ function makeRequest(endpoint) {
   });
 }
 
-export async function getLatestRate(req, res) {
-  try {
-    const data = await makeRequest('/latest.json?base=USD');
-    const db = getDb();
-    
-    await db.collection('currentRates').updateOne(
-      { base: data.base },
-      { 
-        $set: {
-          rates: data.rates,
-          lastUpdated: new Date(data.timestamp * 1000)
-        }
-      },
-      { upsert: true }
-    );
-
-    res.json(data);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Error' });
-  }
-}
-
 export async function getHistoricalRate(req, res) {
   try {
     const { date } = req.params;
-    const queryDate = new Date(date);
     const db = getDb();
     
-    let historicalRate = await db.collection('historicalRates').findOne({ date: queryDate });
+    if (!db) {
+      throw new Error("No DB connection");
+    }
     
-    if (!historicalRate) {
+    let rateDoc = await db.collection(rateCollection).findOne({ date: date });
+    
+    if (!rateDoc) {
       const data = await makeRequest(`/historical/${date}.json?base=USD`);
-      historicalRate = {
-        date: queryDate,
-        base: data.base,
-        rates: data.rates
-      };
-      await db.collection('historicalRates').insertOne(historicalRate);
+      const rate = new Rate(date, data.base, data.rates);
+      await db.collection(rateCollection).insertOne(rate.toDocument());
+      rateDoc = rate.toDocument();
     }
 
-    res.json(historicalRate);
+    res.json(Rate.fromDocument(rateDoc));
   } catch (error) {
-    console.error('Error', error);
+    console.error('Error:', error);
     res.status(500).json({ error: 'Error' });
   }
 }
