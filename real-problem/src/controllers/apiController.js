@@ -1,9 +1,17 @@
 import { get } from 'https';
 import { getDb } from '../dbConnection.js';
 import { Rate, rateCollection } from '../models/rate.js';
+import dotenv from 'dotenv';
 
-const app_id = 'b6b0e542666b440da6b60b04ce2643ac'; 
+dotenv.config();
+
+const app_id = process.env.APP_ID;
 const url = 'https://openexchangerates.org/api';
+
+if (!app_id) {
+  console.error("APP_ID is not defined in the environment variables");
+  process.exit(1);
+}
 
 function makeRequest(endpoint) {
   return new Promise((resolve, reject) => {
@@ -22,26 +30,37 @@ function makeRequest(endpoint) {
 }
 
 export async function getHistoricalRate(req, res) {
+  let db;
   try {
-    const { date } = req.params;
-    const db = getDb();
-    
+    db = getDb();
     if (!db) {
-      throw new Error("No DB connection");
+      throw new Error("No connection");
     }
+
+    const { date } = req.params;
     
     let rateDoc = await db.collection(rateCollection).findOne({ date: date });
     
     if (!rateDoc) {
-      const data = await makeRequest(`/historical/${date}.json?base=USD`);
-      const rate = new Rate(date, data.base, data.rates);
+      console.log("Data not found in DB, fetching from API");
+      const apiData = await makeRequest(`/historical/${date}.json?base=USD`);
+      const rate = new Rate(date, apiData.base, apiData.rates);
+      
       await db.collection(rateCollection).insertOne(rate.toDocument());
+      console.log("Data saved to DB");
+      
       rateDoc = rate.toDocument();
+    } else {
+      console.log("Data found in DB");
     }
 
     res.json(Rate.fromDocument(rateDoc));
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Error' });
+    res.status(500).json({ 
+      error: 'Internal Server Error', 
+      details: error.message,
+      message: "Database disconnected."
+    });
   }
 }
